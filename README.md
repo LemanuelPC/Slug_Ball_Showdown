@@ -1,6 +1,6 @@
 # SlugBall Showdown
 
-SlugBall Showdown is an exciting, physics-based soccer game inspired by Super Slime Soccer. Created during the Code For All Programming Bootcamp as a group project for Game Week, SlugBall Showdown brings intense two-player action to your screen. Built in Java and utilizing the Simple Graphics Library with Keyboard Events, this game showcases realistic physics and dynamic gameplay.
+SlugBall Showdown is an exciting, physics-based football game inspired by Super Slime Soccer. Created during the Code For All Programming Bootcamp as a group project for Game Week, SlugBall Showdown brings intense two-player action to your screen. Built in Java and utilizing the Simple Graphics Library with Keyboard Events, this game showcases realistic physics and dynamic gameplay.
 
 ## Key Features and Gameplay Mechanics
 
