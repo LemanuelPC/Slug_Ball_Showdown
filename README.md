@@ -6,8 +6,6 @@ SlugBall Showdown is an exciting, physics-based soccer game inspired by Super Sl
 
 - **Realistic Physics:** Experience lifelike movement, bouncing, and physical forces that make the game challenging and fun.
 - **Two-Player Mode:** Enjoy competitive play with friends using keyboard controls.
-  - **Player 1 Controls:** `A` (left), `D` (right), `W` (jump)
-  - **Player 2 Controls:** Left Arrow (left), Right Arrow (right), Up Arrow (jump)
 - **Customizable Options:** Change slime skins, background images, and adjust game settings like sound volume and match goals.
 - **Simple Yet Engaging:** Jump, move left and right, and score goals to win the game. No complex powers or single-player AI.
 
@@ -19,10 +17,6 @@ While SlugBall Showdown shares many similarities with Super Slime Soccer, it has
 - **Customizable Settings:** Includes a menu for starting the game and configuring options like skins, backgrounds, sound volume, and match goals.
 
 ## Installation Instructions
-
-### Steps to Clone the Repository
-
-1. Clone the repository.
 
 ### Prerequisites and Dependencies
 
@@ -61,6 +55,7 @@ This project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE) f
 - **Original Game:** Super Slime Soccer and its developer.
 - **Graphics Library:** [Simple Graphics Library](https://github.com/academia-de-codigo/simple-graphics)
 - **Team Members:**
+  - Luís Carvalho - [GitHub](https://github.com/LemanuelPC)
   - Abel Oliveira - [LinkedIn](https://www.linkedin.com/in/abel-r-oliveira-dev)
   - Pedro Ferreira - [GitHub](https://github.com/pedroferreiracodes)
   - Rui Silva - [GitHub](https://github.com/RFMCS)
