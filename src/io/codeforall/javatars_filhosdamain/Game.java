@@ -1,106 +1,154 @@
 package io.codeforall.javatars_filhosdamain;
 
-import org.academiadecodigo.simplegraphics.graphics.Canvas;
-import org.academiadecodigo.simplegraphics.graphics.Color;
-import org.academiadecodigo.simplegraphics.graphics.Text;
-import org.academiadecodigo.simplegraphics.keyboard.Keyboard;
-import org.academiadecodigo.simplegraphics.keyboard.KeyboardEvent;
-import org.academiadecodigo.simplegraphics.keyboard.KeyboardEventType;
-import org.academiadecodigo.simplegraphics.keyboard.KeyboardHandler;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 
-public class Game implements KeyboardHandler {
+public class Game {
+    private Match match;
+    private static final int DELAY = 10;
+    private Menu menu;
+    private Config config;
+    private MatchOptions matchOptions;
+    private BackgroundChooser backgroundChooser;
+    private CharacterChooser characterChooser;
+    private SoundsControls soundsControls;
+    private KeyboardListener keyboardListener;
+    private Sounds matchMusic, hittingGoalSound, goalSound;
+    private boolean matchOpen;
+    private boolean matchPause;
+    private boolean menuOpen;
+    private boolean configOpen;
+    private boolean matchOptionsOpen;
+    private boolean backgroundChooserOpen;
+    private boolean characterChooserOpen;
+    private boolean soundsControlsOpen;
 
-    private int currentOption = 0;
-    private final String[] menuOptions = {"Start Game", "Config", "Exit Game"};
-    private final Text[] menuTexts = new Text[menuOptions.length];
-    Canvas canvas;
-
-    public Game() {
-        canvas = Canvas.getInstance();
-        Canvas.limitCanvasWidth(800);
-        Canvas.limitCanvasHeight(600);
-        initMenu();
-        registerKeyboardEvents();
-    }
-
-    private void initMenu() {
-        for (int i = 0; i < menuOptions.length; i++) {
-            menuTexts[i] = new Text(350, 250 + (i * 50), menuOptions[i]);
-            canvas.show(menuTexts[i]);
+    public void init() {
+        this.keyboardListener = new KeyboardListener();
+        this.menu = new Menu(this);
+        this.config = new Config(this);
+        this.matchOptions = new MatchOptions(this);
+        this.backgroundChooser = new BackgroundChooser(this);
+        this.characterChooser = new CharacterChooser(this);
+        try {
+            this.matchMusic = new Sounds("/data/sound/futebol.wav");
+            this.hittingGoalSound = new Sounds("/data/sound/hittingPost.wav");
+            this.goalSound = new Sounds("/data/sound/goal.wav");
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
         }
-        updateMenuDisplay();
-    }
+        this.soundsControls = new SoundsControls(this);
+        this.match = new Match(this, matchOptions.timeLimit, matchOptions.maxGoals, backgroundChooser.backgroundChoice, characterChooser.characterP1, characterChooser.characterP2, matchMusic, hittingGoalSound, goalSound);
+        //keyboardListener.setEntity(menu);
+        setMenuOpen(true);
 
-    private void updateMenuDisplay() {
-        for (int i = 0; i < menuTexts.length; i++) {
-            menuTexts[i].setColor(i == currentOption ? Color.RED : Color.BLACK);
-        }
-    }
 
-    private void registerKeyboardEvents() {
-        Keyboard keyboard = new Keyboard(this);
-        int[] keys = {KeyboardEvent.KEY_UP, KeyboardEvent.KEY_DOWN, KeyboardEvent.KEY_ENTER};
-        for (int key : keys) {
-            keyboard.addEventListener(createKeyboardEvent(key, KeyboardEventType.KEY_PRESSED));
-            keyboard.addEventListener(createKeyboardEvent(key, KeyboardEventType.KEY_RELEASED));
-        }
-    }
+        while (true) {
+            /*System.out.println("Menu Open? - " + menuOpen);
+            System.out.println("Menu Visible? - " + menu.isVisible);
+            System.out.println("Config Open? - " + configOpen);
+            System.out.println("Config Visible? - " + config.isVisible);
+            System.out.println("Match Options Open? - " + matchOptionsOpen);
+            System.out.println("Match Options Visible? - " + matchOptions.isVisible);*/
+            try {
+                Thread.sleep(DELAY);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-    private KeyboardEvent createKeyboardEvent(int key, KeyboardEventType type) {
-        KeyboardEvent event = new KeyboardEvent();
-        event.setKey(key);
-        event.setKeyboardEventType(type);
-        return event;
-    }
+            if (matchOpen && !match.initiated) {
+                reloadOptions();
+                match.init();
+            }
 
-    @Override
-    public void keyPressed(KeyboardEvent e) {
-        switch (e.getKey()) {
-            case KeyboardEvent.KEY_UP:
-                currentOption = (currentOption - 1 + menuOptions.length) % menuOptions.length;
-                updateMenuDisplay();
-                break;
-            case KeyboardEvent.KEY_DOWN:
-                currentOption = (currentOption + 1) % menuOptions.length;
-                updateMenuDisplay();
-                break;
-            case KeyboardEvent.KEY_ENTER:
-                executeSelectedOption();
-                break;
-        }
-    }
+            if (configOpen && !config.isVisible){
+                config.display();
+            }
 
-    @Override
-    public void keyReleased(KeyboardEvent e) {
-        // Optional: Implement if needed for finer control over key events
-    }
-
-    private void executeSelectedOption() {
-        switch (currentOption) {
-            case 0:
-                // Start the game
-                startGame();
-                break;
-            case 1:
-                // Open configuration settings
-                openConfig();
-                break;
-            case 2:
-                // Exit the game
-                System.exit(0);
-                break;
+            if (menuOpen && !menu.isVisible){
+                menu.display();
+            }
+            if (matchOptionsOpen && !matchOptions.isVisible){
+                matchOptions.display();
+            }
+            if (backgroundChooserOpen && !backgroundChooser.isVisible){
+                backgroundChooser.display();
+            }
+            if (characterChooserOpen && !characterChooser.isVisible){
+                characterChooser.display();
+            }
+            if (soundsControlsOpen && !soundsControls.isVisible){
+                soundsControls.display();
+            }
         }
     }
 
-    private void startGame() {
-        // Initialize game entities and start the game loop
+    public void setKeyboardListenerEntity(Interactable event){
+        keyboardListener.setEntity(event);
     }
 
-    private void openConfig() {
-        // Show configuration options for key bindings and volume settings
+    public void openMenu(){
+        if(!menu.isVisible) {
+            menu.display();
+        }
     }
 
-    public static void main(String[] args) {
-        new Game();
+    public void reloadOptions(){
+        this.match = new Match(this, matchOptions.timeLimit, matchOptions.maxGoals, backgroundChooser.backgroundChoice, characterChooser.characterP1, characterChooser.characterP2, matchMusic, hittingGoalSound, goalSound);
+    }
+
+    public void resumeGame(){
+        match.showGame();
+    }
+
+    public void newMatch() {
+        match.initiated = false;
+        match.isPaused = false;
+        this.match = new Match(this, matchOptions.timeLimit, matchOptions.maxGoals, backgroundChooser.backgroundChoice, characterChooser.characterP1, characterChooser.characterP2, matchMusic, hittingGoalSound, goalSound);
+    }
+
+    public void setMatchOpen(boolean state) {
+        this.matchOpen = state;
+    }
+
+    public boolean isMatchPause() {
+        return matchPause;
+    }
+
+    public void setMatchPause(boolean state) {
+        this.matchPause = state;
+    }
+
+    public boolean isMenuOpen() {
+        return menuOpen;
+    }
+
+    public void setMenuOpen(boolean menuOpen) {
+        this.menuOpen = menuOpen;
+    }
+
+    public void setConfigOpen(boolean configOpen) {
+        this.configOpen = configOpen;
+    }
+
+    public void setMatchOptionsOpen(boolean matchOptionsOpen) {
+        this.matchOptionsOpen = matchOptionsOpen;
+    }
+
+    public void setBackgroundChooserOpen(boolean backgroundChooserOpen) {
+        this.backgroundChooserOpen = backgroundChooserOpen;
+    }
+
+    public void setCharacterChooserOpen(boolean characterChooserOpen) {
+        this.characterChooserOpen = characterChooserOpen;
+    }
+
+    public void setSoundsControlsOpen(boolean soundsControlsOpen) {
+        this.soundsControlsOpen = soundsControlsOpen;
+    }
+
+    public Sounds getMatchMusic() {
+        return matchMusic;
     }
 }
